@@ -1,0 +1,15 @@
+check,result
+Accepted runs,200/200
+Experimental cells,20
+Independent runs per cell,10
+Measured TLS handshakes,8000
+Warmup TLS handshakes,1000
+Idle / active accepted runs,100 / 100
+Automated run validator,200/200 PASS
+Expected crypto mapping,200/200 PASS
+Both gNB KPM streams,200/200
+UE1 active throttling,0/200
+UE2 active throttling,0/200
+Kernel PCAP drops,0/200
+Failed attempts retained,6
+Final raw-data manifest SHA256,83cadb4ec234ee07ad9dc95f99d0da97467e725d6881b1bfa5abf80a41ecdc10
