@@ -161,34 +161,8 @@ ERA-Crypto/
 
 The repository includes implementation scripts, processed measurements from 200 accepted experimental runs, and six representative TLS packet-capture samples. The `analysis/` directory provides tools for independent verification, while `integrity/` preserves experimental configuration and validation metadata.
 
-## 5. Reproduce the released analysis
 
-From the repository root on Linux, install the packet-analysis prerequisites and **reanalyze the available PCAPs**:
-
-```bash
-sudo apt-get update && sudo apt-get install -y python3 tshark
-cat integrity/sample_manifest.tsv
-bash analysis/reanalyze_samples.sh
-```
-
-The script uses the archived analyzer and TLS CSV to compare each PCAP with its `pcap_summary.json`. Results go to `derived/` without modifying source data.
-
-To **recompute within-block statistical comparisons** from the released run summaries:
-
-```bash
-mkdir -p derived/paired_reproduction/processed
-cp data/processed/run_summary.csv derived/paired_reproduction/processed/
-python3 code/vm1/runtime/era7h_paired_stats.py derived/paired_reproduction
-
-# Check the generated primary comparison against the released result:
-diff -u data/processed/paired_headline.csv \
-  derived/paired_reproduction/processed/paired_headline.csv
-```
-
-The statistics script requires its accompanying `era7h_validate_run.py` module and generates `paired_tests.csv` and `paired_headline.csv`. Run these commands only when the referenced files are present.
-
-
-## 6. TLS PCAP walkthrough: ML-KEM-1024 and group ID `0x1024`
+## 5. TLS PCAP walkthrough: ML-KEM-1024 and group ID `0x1024`
 
 The screenshot below is an example of the experiment's TLS 1.3 `ServerHello`. The exact filename and packet number have **not yet been established for this screenshot**, so it must not be described as a specific named sample unless a matching capture is identified.
 
@@ -236,15 +210,15 @@ tshark -r "$PCAP" -Y 'tls.handshake.type == 2' -V | \
   grep -Ei 'Server Hello|supported.version|Group:|Key Exchange Length'
 ```
 
-## 7. Evaluation scope and documentation
+## 6. Evaluation scope and documentation
 
 The evaluation characterizes **PQC selection, protocol performance and policy enforcement** under ZeroMQ-based radio emulation, not over-the-air 5G. Controlled battery inputs do not establish energy savings; tested enforcement is not a comprehensive adversarial-security assessment.
 
 For full deployment dependencies and validation, see [Setup and rerun](docs/SETUP_AND_RERUN.md) and, [File map](docs/FILE_MAP.md).
 
-## 8. Integrity checks, expected outputs and limitations
+## 7. Integrity checks, expected outputs and limitations
 
-### 8.1 Verify file integrity
+### 7.1 Verify file integrity
 
 From the repository root, if `integrity/CANDIDATE_SHA256.txt` is present:
 
@@ -254,7 +228,7 @@ sha256sum -c integrity/CANDIDATE_SHA256.txt
 
 This manifest covers the reviewed GitHub candidate files and must be regenerated whenever files are edited. The original `valid200_SHA256_final.txt` records the full accepted dataset in its original source layout; a public sample-only repository **cannot** validate all of those original raw-file entries.
 
-### 8.2 Recorded experiment scale and analysis units
+### 7.2 Recorded experiment scale and analysis units
 
 | Item | Recorded count |
 |---|---:|
@@ -269,7 +243,7 @@ This manifest covers the reviewed GitHub candidate files and must be regenerated
 
 The **independent unit** for comparisons is the run (10 runs per context/policy cell), not each individual handshake. The processed summaries, paired comparisons and confidence intervals must be interpreted at run level.
 
-### 8.3 Evaluation Scope
+### 7.3 Evaluation Scope
 
 ERA-Crypto is evaluated in a software-defined 5G/O-RAN testbed with ZeroMQ-based radio transport. The experimental results characterize cryptographic adaptation and protocol performance within this environment.
 
@@ -290,7 +264,7 @@ The repository provides processed results, analysis code, validation metadata, a
 - **Capture sensitivity:** review PCAP payloads, certificate material, timestamps, local addresses and identifying metadata before any public release.
 
 
-## 9. Reproducibility status and references
+## 8. Reproducibility status and references
 
 Before calling a new release reproducible, verify that:
 
