@@ -188,7 +188,7 @@ This identifier predates the currently assigned ML-KEM-1024 TLS group code point
 
 Wireshark displaying *Unknown* means that this decoder did not map code point 4132 to a label; it does **not** by itself indicate failure. The code point and length are strong evidence consistent with historical ML-KEM-1024 negotiation. For implementation-level confirmation, correlate this PCAP with the actual BoringSSL group mapping, the executed binary hash and the matching per-handshake log.
 
-A detailed packet-level verification checklist is in [PCAP evidence](docs/PCAP_EVIDENCE.md).
+A detailed packet-level verification checklist is in [PCAP evidence](data/pcap_samples).
 
 **Locate the identifier in BoringSSL (UE1 or UE2):**
 
