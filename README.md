@@ -164,7 +164,7 @@ The repository includes implementation scripts, processed measurements from 200 
 
 ## 5. TLS PCAP walkthrough: ML-KEM-1024 and group ID `0x1024`
 
-The screenshot below is an example of the experiment's TLS 1.3 `ServerHello`. The exact filename and packet number have **not yet been established for this screenshot**, so it must not be described as a specific named sample unless a matching capture is identified.
+The screenshot below is an example of the experiment's TLS 1.3 `ServerHello`.
 
 ![Wireshark ServerHello with unknown key-share group 4132 and 1,568-byte exchange](docs/images/wireshark_mlkem1024_serverhello.png)
 
@@ -174,8 +174,6 @@ This identifier predates the currently assigned ML-KEM-1024 TLS group code point
 
 **References:** [Historical IETF draft](https://datatracker.ietf.org/doc/html/draft-connolly-tls-mlkem-key-agreement-03) · [IANA TLS Supported Groups registry](https://www.iana.org/assignments/tls-parameters/tls-parameters.xhtml#tls-parameters-8)
 
-![IETF draft defining the historical ML-KEM-1024 TLS group identifier mlkem1024(0x1024)](docs/images/ietf_screenshot.png)
-
 | Field visible in Wireshark | Meaning |
 |---|---|
 | `Handshake Type: Server Hello (2)` | A TLS server response |
@@ -183,6 +181,8 @@ This identifier predates the currently assigned ML-KEM-1024 TLS group code point
 | `supported_versions: TLS 1.3 (0x0304)` | Negotiated TLS protocol version |
 | `key_share → Group: Unknown (4132)` | `4132` decimal = **`0x1024`** hexadecimal |
 | `Key Exchange length: 1568` | Matches the **1,568-byte ML-KEM-1024 ciphertext** |
+
+![IETF draft defining the historical ML-KEM-1024 TLS group identifier mlkem1024(0x1024)](docs/images/ietf_screenshot.png)
 
 **Why `0x1024`?** The historical IETF Internet-Draft [`draft-connolly-tls-mlkem-key-agreement-03`](https://datatracker.ietf.org/doc/html/draft-connolly-tls-mlkem-key-agreement-03) defined `mlkem1024(0x1024)` as a TLS `NamedGroup`. That draft was replaced; the current [IANA TLS Supported Groups registry](https://www.iana.org/assignments/tls-parameters/tls-parameters.xhtml#tls-parameters-8) assigns **514 (`0x0202`)** to MLKEM1024. The 1,568-byte ciphertext size is defined by [NIST FIPS 203](https://nvlpubs.nist.gov/nistpubs/FIPS/NIST.FIPS.203.pdf). TLS 1.3 ServerHello's legacy version field is defined in [RFC 8446](https://www.rfc-editor.org/rfc/rfc8446.html).
 
