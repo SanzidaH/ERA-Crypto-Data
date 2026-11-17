@@ -1,15 +1,20 @@
 # ERA-Crypto: Policy-Bounded Post-Quantum Crypto-Agility for a 5G/O-RAN Testbed
-
+<--
 **Reproducible implementation · Experimental configuration · Packet traces · Analysis and validation**
-
 ERA-Crypto is a context-aware post-quantum cryptography (PQC) selection framework implemented over a software-defined 5G/O-RAN environment. The system selects a TLS 1.3 key-encapsulation mechanism (KEM) using dual-gNB E2/KPM-derived path activity and selects a TLS signature configuration using endpoint battery state. Every selection remains subject to a configured, PQC-only policy envelope.
 
 This repository organizes the deployment scripts, controller and endpoint components, experimental settings, processed measurements, validation records, and selected packet captures needed to examine the implementation and reproduce its available results. It supports two workflows:
 
 - **Offline verification:** reproduce measurements from the included TLS PCAP samples and examine the processed dataset without running a 5G stack.
 - **End-to-end execution:** reconstruct the four-machine environment, validate the radio/core/RIC/TLS stack, and run a new blocked campaign with the same recorded design.
+- **Implementation · Experimental configuration · Experimental dataset · Packet captures · Reproducibility**
+-->
 
-> **Artifact scope:** The processed dataset covers **200 accepted runs**. This repository includes **representative raw PCAP samples**, not necessarily the complete set of raw captures for all runs. An independent deployment also requires compatible, locally built software and appropriately sanitized configuration templates. Check the [release inventory](#repository-layout) and [reproducibility status](#reproducibility-status) before treating the checkout as a turnkey installation.
+ERA-Crypto implements context-aware **post-quantum cryptography (PQC) selection** for TLS 1.3 in a software-defined 5G/O-RAN testbed. It selects an **ML-KEM key-encapsulation mechanism** from dual-gNB E2/KPM-derived path activity and a **PQC signature configuration** from endpoint battery state. A configured PQC-only policy envelope constrains every selection.
+
+The repository provides implementation scripts, processed results, representative packet captures and validation metadata for offline verification.
+
+> **Artifact scope:** The processed dataset covers **200 accepted runs**. This repository includes **representative raw PCAP samples**, not necessarily the complete set of raw captures for all runs. An independent deployment also requires compatible, locally built software and appropriately sanitized configuration templates.
 
 ## 1. Architecture
 
@@ -69,8 +74,6 @@ The path-activity cutoff was configured as **322.4 kbit/s** in the processed KPM
 
 ## 2. Hardware and network configuration
 
-The following inventory was inspected on **November 17, 2026**. It is a record of the observed machines; the *original run-time* software fingerprints are preserved separately in the campaign metadata.
-
 | Machine | Hardware / virtual allocation | Memory | Role |
 |---|---|---|---|
 | Alienware host | Alienware x16 R2; Intel Core Ultra 9 185H (16 physical cores, 22 logical CPUs reported by Linux); NVIDIA RTX 4070 Laptop GPU (8,188 MiB VRAM) | ~30 GiB usable host RAM | VMware host |
@@ -90,11 +93,11 @@ Host storage: Samsung PM9F1 1024-GB NVMe (953.9 GiB displayed by Linux). The GPU
 
 These management addresses are **lab-specific examples**. Adapt the network and UE namespace settings for another deployment. The archived VM2 route was `10.53.1.0/24 via 192.168.0.4 dev ens37`; confirm interfaces and subnet routing before applying it.
 
-Both checked gNB YAML files specify **NR band 3, 10 MHz channel bandwidth, 15 kHz subcarrier spacing, 11.52 Msamples/s base sample rate and E2AP enabled**. These were observed in the November 2026 configurations; verify against archived hashes before treating them as unchanged historical files.
+Both checked gNB YAML files specify **NR band 3, 10 MHz channel bandwidth, 15 kHz subcarrier spacing, 11.52 Msamples/s base sample rate and E2AP enabled**.
 
 ## 3. Software environment and provenance
 
-### 3.1 Versions observed in the inspected environment
+### 3.1 Versions
 
 | Component | Version / identifier | Where observed |
 |---|---|---|
@@ -115,9 +118,7 @@ Both checked gNB YAML files specify **NR band 3, 10 MHz channel bandwidth, 15 kH
 | liboqs checkout | `d0d0413dc9fff538296ab86bac492cb4bf54dedb` | UE1 |
 | srsRAN_4G checkout | `6bcbd9e5bf8686aa7085202cd847c5ddd64a9c16` | UE1 |
 
-**Versioning caveats.** The UE1 BoringSSL and liboqs working trees contained extensive local modifications when inspected. A Git commit alone does **not** identify the exact executed binary. The UE2 revision and binary hash also require independent confirmation. Open5GS and RIC container image digests were not independently established from the November inspection (the VM1 container list was empty at that moment); consult the original campaign's saved `env_info.json` and preserved image/build metadata.
-
-For a concise inventory and build-provenance checklist, see [Environment and builds](docs/ENVIRONMENT_AND_BUILDS.md). The dataset's `meta/env_frozen.json` records the code/binary hashes captured with the run; `meta/env_info.json` contains original software/environment observations. Use these files as the primary provenance records and compare them to the current working trees **before claiming a bit-for-bit reproduction**. If relevant local source modifications are required, preserve and review patches separately from build outputs, credentials and generated files.
+The UE1 BoringSSL and liboqs working trees contains local modifications. 
 
 ### 3.2 Rebuilding the original crypto environment
 
@@ -134,157 +135,58 @@ git -C ~/Downloads/liboqs status --short
 git -C ~/srsRAN_4G rev-parse HEAD
 ```
 
-When reconstructing from a fresh checkout, apply reviewed relevant patches, compile compatible binaries and confirm their supported groups and signature configuration. Do **not** distribute endpoint private keys or original subscriber credentials. Where complete patches/build instructions have not been released, the full implementation is **not yet independently build-reproducible**.
-
 ## 4. Repository layout
 
 ```text
-Era-Crypto_Files/
-├── README.md
+ERA-Crypto/
+├── analysis/              # Validation and PCAP reanalysis
 ├── code/
-│   ├── vm1/                       # Controller, E2/KPM, experiment orchestration
-│   │   ├── runtime/               # Installed era7h scripts (if collected)
-│   │   └── ...
-│   ├── vm2/                       # Second gNB helper scripts (if available)
-│   ├── ue1/                       # PQC-TLS server helpers
-│   └── ue2/                       # Agent, battery and benchmark worker
-├── configs/                       # Reviewed configuration templates only
-├── analysis/
-│   ├── reanalyze_samples.sh       # Offline sample-PCAP analysis
-│   └── ...
+│   ├── ue1/scripts/       # PQC-TLS server and battery control
+│   ├── ue2/
+│   │   ├── runtime/       # TLS measurement and worker scripts
+│   │   └── scripts/       # Adaptation agent and battery controls
+│   ├── vm1/
+│   │   ├── controller/    # Policy controller and E2/KPM processing
+│   │   ├── final_source_pack/
+│   │   └── runtime/       # Experiment driver and analysis
+│   └── vm2/               # Second gNB components
+├── configs/               # Configuration files
 ├── data/
-│   ├── processed/                # Run/cell summaries and paired statistics
-│   ├── primary_pairing_manifest.csv  # Optional run-level pairing audit
-│   ├── table_primary_comparisons.csv # Optional curated summary
-│   └── pcap_samples/
-│       └── <RUN_ID>/
-│           ├── VALID.ok
-│           ├── COMPLETE.ok
-│           ├── metadata.json
-│           ├── validation.json
-│           ├── pcap_summary.json
-│           ├── pcap_stream_metrics.csv
-│           └── ue2/
-│               ├── crypto_measured.pcap
-│               └── crypto_log_measured.csv
-├── integrity/
-│   ├── campaign_config.json       # Actual run settings (when included)
-│   ├── schedule.csv               # Randomized schedule
-│   ├── sample_manifest.tsv        # Which samples were actually included
-│   └── ...
-└── docs/
-    ├── images/wireshark_mlkem1024_serverhello.png
-    └── ...
+│   ├── pcap_samples/      # Six representative experimental runs
+│   └── processed/         # Processed results and statistics
+├── docs/                  # Setup guides and packet screenshots
+├── integrity/             # Manifests, hashes and run metadata
+└── old/                   # Archived previous repository files
 ```
 
-The private source archive may also contain the complete original accepted-run tree, failed/quarantined attempts, raw telemetry and private machine-specific settings. **These are not implicitly part of a public checkout.** Consult `integrity/sample_manifest.tsv` for the actual list of released PCAPs rather than assuming every example listed below was transferred.
+The repository includes implementation scripts, processed measurements from 200 accepted experimental runs, and six representative TLS packet-capture samples. The `analysis/` directory provides tools for independent verification, while `integrity/` preserves experimental configuration and validation metadata.
 
-## 5. Reproduce the included packet measurements (no 5G hardware required)
+## 5. Reproduce the released analysis
 
-The packet-level workflow uses the original PCAP analyzer and pairs each capture with its measured-connection CSV. Its output includes TCP-frame bytes and packet counts by stream, TCP SYN/SYN-ACK RTT estimates, retransmission counts and flow duration. **Captured frame bytes are not the same metric as TLS application payload bytes or KEM operation time.**
-
-### Step 1 — Clone and install dependencies
+From the repository root on Linux, install the packet-analysis prerequisites and **reanalyze the available PCAPs**:
 
 ```bash
-git clone https://github.com/SanzidaH/Era-Crypto_Files.git
-cd Era-Crypto_Files
-
-sudo apt-get update
-sudo apt-get install -y python3 tshark
-```
-
-Replace `<OWNER>` with the actual account/organization. A local Linux environment is sufficient for this workflow.
-
-### Step 2 — Inspect the released sample inventory
-
-```bash
+sudo apt-get update && sudo apt-get install -y python3 tshark
 cat integrity/sample_manifest.tsv
-find data/pcap_samples -name crypto_measured.pcap -print
-```
-
-Representative contexts requested for release include:
-
-| Run ID | What it illustrates |
-|---|---|
-| `E2_C00_static_high_b01` | Fixed high-security configuration, inactive path |
-| `E2_C00_era_dual_b01` | Dual-policy negative-control context |
-| `E2_CB0_era_dual_b01` | Low-battery / signature selection |
-| `E2_C0F_era_dual_b01` | Active-path / KEM selection |
-| `E2_CBF_static_high_b01` | Fixed high-security baseline under offered load |
-| `E2_CBF_era_dual_b01` | Dual-axis selected pair under offered load |
-
-Only samples marked `public_included=yes` in `integrity/sample_manifest.tsv` should be treated as available in the repository. The samples require `VALID.ok`, the measured PCAP and its matching CSV; an unvalidated trace should not silently replace an accepted sample.
-
-### Step 3 — Recompute and compare each sample
-
-```bash
 bash analysis/reanalyze_samples.sh
 ```
 
-The script requires `tshark` and `python3`, reads `code/vm1/runtime/era7h_pcap_metrics.py`, writes its reanalysis outputs under `derived/<RUN_ID>/` and compares computed summary values with the included `pcap_summary.json`. **It does not overwrite the archived evidence.**
+The script uses the archived analyzer and TLS CSV to compare each PCAP with its `pcap_summary.json`. Results go to `derived/` without modifying source data.
 
-Expected successful output for each present, valid example:
-
-```text
-[RUN] <RUN_ID>
-[MATCH] Recomputed values agree with original summary
-[PASS] <RUN_ID>
-```
-
-If the analyzer or a matched CSV is absent, the script intentionally fails rather than suggesting the dataset is reproducible.
-
-### Step 4 — Reanalyze one run manually
-
-```bash
-RUN=E2_CBF_era_dual_b01
-PCAP="data/pcap_samples/$RUN/ue2/crypto_measured.pcap"
-CSV="data/pcap_samples/$RUN/ue2/crypto_log_measured.csv"
-
-mkdir -p "derived/$RUN"
-python3 code/vm1/runtime/era7h_pcap_metrics.py \
-  --pcap "$PCAP" \
-  --crypto-csv "$CSV" \
-  --outdir "derived/$RUN"
-
-cat "derived/$RUN/pcap_summary.json"
-cat "data/pcap_samples/$RUN/pcap_summary.json"
-```
-
-Replace the run ID if this example was not released. The original analyzer expects the client/server 5G namespace IPs used in the accepted experiment; its SYN RTT logic is not address-agnostic. If you adapt these addresses, update and document the analyzer instead of assuming equivalent results.
-
-### Step 5 — Explore the processed full-campaign outputs
-
-```bash
-find data/processed -maxdepth 1 -type f -print | sort
-head -n 5 data/processed/run_summary.csv
-head -n 5 data/processed/cell_summary.csv
-```
-
-These are **processed results from all accepted runs**; six example captures are not sufficient to regenerate the entire dataset. For statistical checks, treat the **10 accepted runs per policy/context cell** as independent experimental units. The 40 measured connections within each run are nested observations, not 40 independent blocks.
-
-### Step 6 — Reproduce the blocked policy comparisons
-
-The randomized design pairs policies **within the same block and context**. The independent observation is an accepted run; the 40 TLS connections in a run are repeated measurements within that observation, not 40 independent replicates. The primary planned comparison is **ERA-Dual versus Static-H** (`era_dual` versus `static_high`) in each of the four contexts. Other comparisons isolate the battery and RAN axes.
-
-The archived `data/processed/run_summary.csv` contains the run-level input records. The released `era7h_paired_stats.py` joins runs by `(context, block)` and calculates within-block differences, paired t-tests, exact Wilcoxon signed-rank tests, confidence intervals, and Holm-adjusted p-values. It writes `paired_tests.csv` (all supported comparisons) and `paired_headline.csv` (the primary comparison and selected metrics).
-
-To rerun this analysis **without modifying the archived data**, from the repository root:
+To **recompute within-block statistical comparisons** from the released run summaries:
 
 ```bash
 mkdir -p derived/paired_reproduction/processed
 cp data/processed/run_summary.csv derived/paired_reproduction/processed/
 python3 code/vm1/runtime/era7h_paired_stats.py derived/paired_reproduction
 
-# Compare with the corresponding released processed outputs, when available.
-diff -u data/processed/paired_tests.csv \
-  derived/paired_reproduction/processed/paired_tests.csv
+# Check the generated primary comparison against the released result:
 diff -u data/processed/paired_headline.csv \
   derived/paired_reproduction/processed/paired_headline.csv
 ```
 
-If your checkout uses a different location for `era7h_paired_stats.py`, substitute its actual path. A nonzero `diff` exit code means the outputs differ and should be investigated, not silently ignored. The script also needs the matching `era7h_validate_run.py` in its directory because that module provides the expected policy/context combinations.
+The statistics script requires its accompanying `era7h_validate_run.py` module and generates `paired_tests.csv` and `paired_headline.csv`. Run these commands only when the referenced files are present.
 
-**Additional comparison provenance.** Some releases also include a manually prepared `primary_pairing_manifest.csv` and `table_primary_comparisons.csv`. These are useful for showing the exact run IDs paired in each block and for presenting a concise comparison table, respectively, but they are **not outputs of the paired-statistics script above**. Include and link them only if they exist in the final release; preserve their original definitions and confirm they agree with `run_summary.csv` and `paired_headline.csv`. Do not replace the raw script outputs with these curated tables.
 
 ## 6. TLS PCAP walkthrough: ML-KEM-1024 and group ID `0x1024`
 
@@ -298,7 +200,7 @@ This identifier predates the currently assigned ML-KEM-1024 TLS group code point
 
 **References:** [Historical IETF draft](https://datatracker.ietf.org/doc/html/draft-connolly-tls-mlkem-key-agreement-03) · [IANA TLS Supported Groups registry](https://www.iana.org/assignments/tls-parameters/tls-parameters.xhtml#tls-parameters-8)
 
-![IETF draft defining the historical ML-KEM-1024 TLS group identifier mlkem1024(0x1024)](docs/images/ieft_screenshot.png)
+![IETF draft defining the historical ML-KEM-1024 TLS group identifier mlkem1024(0x1024)](docs/images/ietf_screenshot.png)
 
 | Field visible in Wireshark | Meaning |
 |---|---|
@@ -334,63 +236,11 @@ tshark -r "$PCAP" -Y 'tls.handshake.type == 2' -V | \
   grep -Ei 'Server Hello|supported.version|Group:|Key Exchange Length'
 ```
 
-## 7. Recreate an end-to-end campaign
+## 7. Evaluation scope and documentation
 
-This path requires specialized infrastructure and compatible, locally generated credentials. Keep the original accepted dataset immutable. **Do not rerun collection scripts into its results directory.**
+The evaluation characterizes **PQC selection, protocol performance and policy enforcement** under ZeroMQ-based radio emulation, not over-the-air 5G. Controlled battery inputs do not establish energy savings; tested enforcement is not a comprehensive adversarial-security assessment.
 
-### Step 1 — Prepare the machines and network
-
-Provision VM1, VM2, UE1 and UE2 with the required software and reviewed configuration templates. Validate IP routing, ZMQ port relationships, gNB/UE attachment and UE namespace connectivity. Recreate subscriber records with **new local credentials**, not the original subscriber secrets. Adapt all example IP addresses to the target network.
-
-### Step 2 — Build and verify the cryptographic endpoints
-
-Use the recorded BoringSSL/liboqs revisions and any *reviewed* local integration patches. Generate new TLS certificates and keys locally. Start both UE1 TLS endpoints and verify that the expected algorithm pairs can be negotiated. Confirm group-code mapping in the actual TLS implementation before comparing captures.
-
-### Step 3 — Start the radio/core/RIC stack
-
-Start Open5GS and supporting services on VM1; launch gNB1 and gNB2 with the reviewed YAML configurations. Start the corresponding srsUE processes on UE1 and UE2, and confirm `tun_srsue` addressing. Validate connectivity between `10.45.1.3` and `10.45.1.2` or their adapted equivalents.
-
-### Step 4 — Enable policy and telemetry
-
-Bring up dual-gNB E2/KPM monitoring, verify fresh observations from both gNBs, start the ERA decision controller, then the UE2 agent and benchmark worker. Start the UE1 iperf3 receiver for active-path contexts. For adaptive runs, verify the controller API and negotiated KEM/signature selection, not just a policy label.
-
-### Step 5 — Run the original preflight
-
-On VM1, with the installed runtime and dependencies in place:
-
-```bash
-~/era7h/era7h_preflight.sh
-```
-
-The documented successful preflight ends with:
-
-```text
-[READY] ERA7H FINAL preflight passed.
-```
-
-Do not proceed if SSH, worker snapshot, E2/KPM feeds, policy service, TLS endpoints, or radio namespace connectivity checks fail.
-
-### Step 6 — Verify the frozen design; use a NEW output root
-
-The accepted campaign used **four contexts × five policy modes × ten randomized blocks**, **five warm-ups and forty measured connections per run**, `--seed 20261017`, `--sleep 0.7` and `--load-rate 0.712M`. Check the original `integrity/campaign_config.json` and `integrity/schedule.csv` before execution; a previous planning runbook specified 50 measurements and must not override the accepted campaign metadata.
-
-The following is a **reconstructed command reflecting the validated design**, not a verbatim copy of the original terminal invocation:
-
-```bash
-NEWROOT="$HOME/results/era7h_reproduction_$(date +%Y%m%d_%H%M%S)"
-python3 ~/era7h/era7h_driver.py \
-  --experiment E2 --root "$NEWROOT" \
-  --blocks 10 --measured 40 --warmup 5 \
-  --contexts C00,CB0,C0F,CBF \
-  --conditions static_low,static_high,battery_only,ran_only,era_dual \
-  --seed 20261017 --sleep 0.7 --load-rate 0.712M --max-attempts 2
-```
-
-A new result root avoids overwriting accepted data. The current public checkout does not include VM images, endpoint secrets or automatically runnable installation files; complete end-to-end execution depends on restoring and validating those prerequisites.
-
-### Step 7 — Validate the new results
-
-Require `COMPLETE.ok`, `VALID.ok`, correct negotiated cryptographic pairs, fresh dual-gNB KPM data, expected controlled context, zero failures in the accepted measurements, and valid packet-analysis summaries. Examine `meta/attempts.csv` and the quarantine directory before reporting accepted-run counts. Do not silently drop failed attempts. Use the included analysis scripts on the **new result root**, not the archived October dataset.
+For full deployment dependencies and validation, see [Setup and rerun](docs/SETUP_AND_RERUN.md) and, [File map](docs/FILE_MAP.md).
 
 ## 8. Integrity checks, expected outputs and limitations
 
@@ -419,6 +269,16 @@ This manifest covers the reviewed GitHub candidate files and must be regenerated
 
 The **independent unit** for comparisons is the run (10 runs per context/policy cell), not each individual handshake. The processed summaries, paired comparisons and confidence intervals must be interpreted at run level.
 
+### 8.3 Evaluation Scope
+
+ERA-Crypto is evaluated in a software-defined 5G/O-RAN testbed with ZeroMQ-based radio transport. The experimental results characterize cryptographic adaptation and protocol performance within this environment.
+
+The evaluation uses controlled endpoint battery states and RAN path-activity conditions to examine independent and combined KEM/signature adaptation. The policy thresholds are configured parameters, and the experiments focus on cryptographic selection rather than energy consumption or congestion estimation.
+
+All cryptographic selections are checked against a configured PQC-only policy envelope. The enforcement evaluation examines rejection of disallowed algorithm choices under the tested conditions.
+
+The repository provides processed results, analysis code, validation metadata, and representative packet captures for independent verification. Full experimental deployment requires the documented software stack, network configuration, and compatible cryptographic builds.
+<!--
 ### 8.3 Interpretation boundaries
 
 - **Software-emulated radio:** measurements characterize a ZeroMQ/software-radio testbed; absolute latency and throughput are not over-the-air 5G performance figures.
@@ -428,6 +288,7 @@ The **independent unit** for comparisons is the run (10 runs per context/policy 
 - **Raw data availability:** public sample captures support independent packet-level inspection; re-estimating all 200 raw captures requires a separately preserved complete dataset.
 - **Rebuild scope:** source commit hashes without local integration patches and matching binaries do not establish binary reproducibility.
 - **Capture sensitivity:** review PCAP payloads, certificate material, timestamps, local addresses and identifying metadata before any public release.
+
 
 ## 9. Reproducibility status and references
 
@@ -439,12 +300,12 @@ Before calling a new release reproducible, verify that:
 4. Each public configuration is a sanitized, functional template; real subscriber credentials, SSH material and TLS private keys stay outside the repository.
 5. The screenshot is associated with an exact PCAP/packet number **or** clearly labeled as an illustrative snapshot.
 6. All Git-tracked files and history, including PCAPs, have been reviewed for sensitive content and file size.
-
+-->
 **Standards and protocol references**
 
-- [NIST FIPS 203 — ML-KEM](https://nvlpubs.nist.gov/nistpubs/FIPS/NIST.FIPS.203.pdf)
+- [NIST FIPS 203 - ML-KEM](https://nvlpubs.nist.gov/nistpubs/FIPS/NIST.FIPS.203.pdf)
 - [Historical IETF draft: ML-KEM TLS `NamedGroup` values (`0x1024`)](https://datatracker.ietf.org/doc/html/draft-connolly-tls-mlkem-key-agreement-03)
 - [IANA TLS Supported Groups registry (`MLKEM1024` = 514)](https://www.iana.org/assignments/tls-parameters/tls-parameters.xhtml#tls-parameters-8)
-- [RFC 8446 — TLS 1.3](https://www.rfc-editor.org/rfc/rfc8446.html)
+- [RFC 8446 - TLS 1.3](https://www.rfc-editor.org/rfc/rfc8446.html)
 
 **Reproducibility summary:** the repository is designed to make the experiment architecture, recorded environment and offline sample-PCAP measurement workflow inspectable and repeatable. A full clean-room four-machine rerun remains dependent on compatible builds, sanitized deployment configuration and preserved experiment metadata; it should be described as independently reproduced only after those checks have actually succeeded.
