@@ -1,0 +1,15 @@
+{
+  "expected_crypto": [
+    "mlkem1024",
+    "mldsa44"
+  ],
+  "failures": [],
+  "kpm_19b": 17,
+  "kpm_19c": 15,
+  "measured_rows": 40,
+  "notes": [
+    "audit rows=31 client_batt_key=client_batt server_batt_key=server_batt"
+  ],
+  "run": "E2_C00_static_high_b01",
+  "warmup_rows": 5
+}

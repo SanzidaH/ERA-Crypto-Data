@@ -1,0 +1,11 @@
+{
+  "bytes_per_handshake_mean": 11340.125,
+  "flow_duration_ms_median": 870.693,
+  "packets_per_handshake_mean": 24.325,
+  "streams": 40,
+  "tcp_retransmissions_total": 9,
+  "tcp_syn_rtt_missing": 0,
+  "tcp_syn_rtt_ms_median": 207.9485,
+  "total_capture_bytes": 453605,
+  "total_packets": 973
+}

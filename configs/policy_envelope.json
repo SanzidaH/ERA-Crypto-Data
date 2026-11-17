@@ -1,0 +1,16 @@
+{
+  "default": {
+    "kem_allowed":  ["mlkem768", "mlkem1024"],
+    "kem_floor":    "mlkem768",
+    "sig_allowed":  ["falcon512", "mldsa44"],
+    "sig_floor":    "falcon512",
+    "classical_prohibited": true
+  },
+  "critical": {
+    "kem_allowed":  ["mlkem1024"],
+    "kem_floor":    "mlkem1024",
+    "sig_allowed":  ["mldsa44"],
+    "sig_floor":    "mldsa44",
+    "classical_prohibited": true
+  }
+}

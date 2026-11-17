@@ -1,0 +1,31 @@
+# Never commit secrets, subscriber authentication credentials, runtime logs or VM disks.
+.env
+.env.*
+*.key
+*.pem
+*.p12
+*.pfx
+id_rsa*
+id_ed25519*
+private/
+secrets/
+private_keys/
+*.vmdk
+*.vmem
+*.vmsn
+*.vmss
+*.vmx
+*.pcap
+*.pcapng
+# Measured, manually-reviewed TLS-only example captures are an explicit exception.
+!data/pcap_samples/**/crypto_measured.pcap
+raw/
+quarantine/
+results/
+__pycache__/
+*.pyc
+.DS_Store
+*.log
+*.swp
+*~
+derived/

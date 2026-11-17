@@ -1,0 +1,21 @@
+context,condition,valid,failed_attempts,interrupted,reasons
+C00,battery_only,10,0,0,
+C00,era_dual,10,0,0,
+C00,ran_only,10,0,0,
+C00,static_high,10,0,0,
+C00,static_low,10,0,0,
+C0F,battery_only,10,0,0,
+C0F,era_dual,10,0,0,
+C0F,ran_only,10,0,0,
+C0F,static_high,10,0,0,
+C0F,static_low,10,2,0,"Command '['ssh', '-o', 'BatchMode=yes', '-o', 'ConnectTimeout=10', 'ue2@192.168.0.20', 'python3 /home/ue2/era7h/era7h_wo | Command '['ssh', '-o', 'BatchMode=yes', '-o', 'ConnectTimeout=10', 'ue2@192.168.0.20', 'python3 /home/ue2/era7h/era7h_wo"
+CB0,battery_only,10,2,0,"Command '['ssh', '-o', 'BatchMode=yes', '-o', 'ConnectTimeout=10', 'ue2@192.168.0.20', 'python3 /home/ue2/era7h/era7h_wo | RAN context gate failed for idle"
+CB0,era_dual,10,0,0,
+CB0,ran_only,10,0,0,
+CB0,static_high,10,0,0,
+CB0,static_low,10,1,0,"Command '['ssh', '-o', 'BatchMode=yes', '-o', 'ConnectTimeout=10', 'ue2@192.168.0.20', 'python3 /home/ue2/era7h/era7h_wo"
+CBF,battery_only,10,0,0,
+CBF,era_dual,10,0,0,
+CBF,ran_only,10,0,0,
+CBF,static_high,10,1,0,validation: low UE2 battery crossed >=30: range 88.2-89.0
+CBF,static_low,10,0,0,

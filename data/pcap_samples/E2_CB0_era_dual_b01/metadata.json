@@ -1,0 +1,20 @@
+{
+  "attempt": 1,
+  "block": 1,
+  "condition": "era_dual",
+  "context": "CB0",
+  "expected_kem": "mlkem1024",
+  "expected_sig": "falcon512",
+  "experiment": "E2",
+  "inter_handshake_sleep_s": 0.7,
+  "load_rate": "0.712M",
+  "measured_n": 40,
+  "mode": "dual",
+  "ran_state_target": "idle",
+  "run": "E2_CB0_era_dual_b01",
+  "ue1_batt_target": 90,
+  "ue2_batt_target": 15,
+  "vm1_measure_end_epoch": 1792359314.554619,
+  "vm1_measure_start_epoch": 1792359248.6129794,
+  "warmup_n": 5
+}

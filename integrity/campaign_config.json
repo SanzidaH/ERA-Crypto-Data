@@ -1,0 +1,23 @@
+{
+  "blocks": 10,
+  "conditions": [
+    "static_low",
+    "static_high",
+    "battery_only",
+    "ran_only",
+    "era_dual"
+  ],
+  "contexts": [
+    "C00",
+    "CB0",
+    "C0F",
+    "CBF"
+  ],
+  "experiment": "E2",
+  "load_rate": "0.712M",
+  "measured": 40,
+  "seed": 20261017,
+  "sleep": 0.7,
+  "smoke": false,
+  "warmup": 5
+}

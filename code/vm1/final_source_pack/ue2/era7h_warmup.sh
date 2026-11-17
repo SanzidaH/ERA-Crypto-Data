@@ -1,0 +1,17 @@
+#!/usr/bin/env bash
+set -euo pipefail
+RUN=${1:?run}; N=${2:-5}; COND=${3:?condition}; SLEEP_S=${4:-0.7}
+D=/home/ue2/era7h_runs/$RUN
+[[ -d "$D" ]] || { echo "[FAIL] missing run dir $D" >&2; exit 20; }
+KEM=""; SIG=""
+case "$COND" in
+  static_low|M1) KEM=mlkem768; SIG=falcon512;;
+  static_high|M4) KEM=mlkem1024; SIG=mldsa44;;
+  M2) KEM=mlkem768; SIG=mldsa44;;
+  M3) KEM=mlkem1024; SIG=falcon512;;
+  battery_only|ran_only|era_dual) ;;
+  *) echo "[FAIL] unknown condition $COND" >&2; exit 21;;
+esac
+export ERA7H_OUTDIR="$D" ERA7H_CAPTURE=0
+${ERA7H_BIN:-/home/ue2/era7h}/pqc_bench_v2.sh ue2 ue2 10.45.1.2 "$N" warmup tun_srsue "$KEM" "$SIG" "$SLEEP_S"
+chown -R ue2:ue2 "$D"
